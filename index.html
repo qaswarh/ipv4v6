@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IPv4 & IPv6 Subnet & Multicast Visualizer + Glossary</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="page-layout">
+  <!-- Left Column: Dynamic Glossary -->
+  <aside class="glossary-panel">
+    <!-- IPv4 Glossary -->
+    <div id="glossaryV4">
+      <h2>IPv4 Glossary</h2>
+      <p class="glossary-intro">Core terms for 32-bit IPv4 addressing, subnetting, and multicast.</p>
+
+      <div class="term-card">
+        <h3>Private, CGNAT & Public IPv4</h3>
+        <p><strong>Private (RFC 1918):</strong> <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, and <code>192.168.0.0/16</code> are for internal LANs. <strong>CGNAT (RFC 6598):</strong> <code>100.64.0.0/10</code> is shared ISP space. <strong>Public:</strong> Globally unique and internet-routable.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Network Part (Prefix)</h3>
+        <p>The leading bits of an IPv4 address that identify the specific network or subnet. Routers use this portion to forward packets between networks.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Host Part</h3>
+        <p>The trailing bits that identify an individual device (interface) inside that specific subnet.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>CIDR Notation (/0 – /32)</h3>
+        <p>Classless Inter-Domain Routing suffix (e.g., <code>/24</code>) showing how many leading bits belong to the network part.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Subnet Mask</h3>
+        <p>A 32-bit number (e.g., <code>255.255.255.0</code>) with binary <code>1</code>s for network bits and <code>0</code>s for host bits.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Wildcard Mask</h3>
+        <p>The bitwise inverse of a subnet mask (e.g., <code>0.0.0.255</code>), used in router Access Control Lists (ACLs) and OSPF configs.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Network & Broadcast Addresses</h3>
+        <p>The first address in a subnet (all host bits <code>0</code>) identifies the network itself; the last address (all host bits <code>1</code>) sends traffic to all local hosts.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Class D Multicast (224.0.0.0/4)</h3>
+        <p>Addresses starting with binary <code>1110</code> used for one-to-many group delivery. The lower 23 bits map directly to Ethernet MAC <code>01:00:5e:xx:xx:xx</code>.</p>
+      </div>
+    </div>
+
+    <!-- IPv6 Glossary -->
+    <div id="glossaryV6" class="hidden">
+      <h2>IPv6 Glossary</h2>
+      <p class="glossary-intro">Core terms for 128-bit IPv6 addressing, hextets, and neighbor discovery.</p>
+
+      <div class="term-card">
+        <h3>Global Unicast vs. Unique Local (ULA)</h3>
+        <p><strong>Global Unicast (<code>2000::/3</code>):</strong> Public, globally routable internet addresses. <strong>Unique Local (<code>fc00::/7</code> / <code>fd00::/8</code>):</strong> Private IPv6 space restricted to local networks.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Hextet</h3>
+        <p>A 16-bit block written as four hexadecimal digits (e.g., <code>2001</code>). An IPv6 address contains eight hextets separated by colons.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Global Routing Prefix (1–48)</h3>
+        <p>The top 48 bits assigned by an ISP or regional registry to identify a site or organization on the public internet.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Subnet ID (49–64)</h3>
+        <p>The 16 bits between the global prefix and interface ID, giving organizations 65,536 standard <code>/64</code> LAN subnets.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Interface ID (65–128)</h3>
+        <p>The trailing 64 bits identifying a single network interface—the IPv6 equivalent of the IPv4 host part.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Zero Compression (::)</h3>
+        <p>RFC 5952 shorthand that replaces the longest consecutive run of all-zero hextets with a double colon (<code>::</code>) once per address.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Solicited-Node Multicast</h3>
+        <p>IPv6 has no broadcast. Every unicast address joins <code>ff02::1:ffXX:XXXX</code> (using its last 24 bits) to resolve MAC addresses via Neighbor Discovery.</p>
+      </div>
+
+      <div class="term-card">
+        <h3>Multicast Flags & Scope (ff00::/8)</h3>
+        <p>Addresses starting with <code>ff</code>. The 3rd hex digit sets flags (e.g., transient) and the 4th sets reachability scope (e.g., <code>2</code> = Link-Local, <code>e</code> = Global).</p>
+      </div>
+    </div>
+  </aside>
+  <!-- Right Column: Interactive Visualizer -->
+  <main class="visualizer-column">
+    <div class="net-widget">
+      <div class="tabs">
+        <button class="tab-btn active" id="tabV4" type="button">IPv4 (32-Bit)</button>
+        <button class="tab-btn" id="tabV6" type="button">IPv6 (128-Bit)</button>
+      </div>
+
+      <!-- IPv4 Panel -->
+      <div id="panelV4">
+        <div class="controls-top">
+          <div class="input-wrap">
+            <input type="text" id="v4Input" class="ip-field v4-width" value="192.168.1.50" maxlength="15">
+            <select class="preset-select" id="v4Preset">
+              <option value="">Presets...</option>
+              <option value="192.168.1.50|24">Private LAN (192.168.1.50/24)</option>
+              <option value="10.24.16.5|16">Enterprise Private (10.24.16.5/16)</option>
+              <option value="100.64.12.1|10">CGNAT: Shared ISP Space (100.64.12.1/10)</option>
+              <option value="8.8.8.8|24">Public DNS (8.8.8.8/24)</option>
+              <option value="224.0.0.5|24">Multicast: OSPF Routers (224.0.0.5)</option>
+              <option value="239.255.255.250|24">Multicast: SSDP / UPnP (239.255.255.250)</option>
+              <option value="169.254.10.1|16">Link-Local APIPA (169.254.10.1/16)</option>
+            </select>
+          </div>
+          <div class="cidr-badge" id="v4Badge">/24</div>
+        </div>
+
+        <div class="slider-section">
+          <div class="slider-labels">
+            <span>Network Bits: <span id="v4NetCount">24</span></span>
+            <span>Host Bits: <span id="v4HostCount">8</span></span>
+          </div>
+          <input type="range" id="v4Slider" min="1" max="32" value="24">
+        </div>
+
+        <div class="legend">
+          <span><i class="dot bit-net"></i> Network Prefix</span>
+          <span><i class="dot bit-host"></i> Host Part</span>
+          <span><i class="dot bit-mcast"></i> Multicast Prefix (1110)</span>
+        </div>
+
+        <div class="v4-grid" id="v4BitGrid"></div>
+
+        <div class="mcast-banner unicast-info" id="v4McastBox"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><label>Address Scope & Class</label><div id="v4Scope">-</div></div>
+          <div class="stat-card"><label>Subnet Mask</label><div id="v4Mask">-</div></div>
+          <div class="stat-card"><label>Wildcard Mask (ACL)</label><div id="v4Wildcard">-</div></div>
+          <div class="stat-card"><label>Network Address</label><div id="v4Network">-</div></div>
+          <div class="stat-card"><label>Broadcast Address</label><div id="v4Broadcast">-</div></div>
+          <div class="stat-card"><label>Usable Host Range</label><div id="v4Range">-</div></div>
+          <div class="stat-card"><label>Usable Host Count</label><div id="v4Hosts">-</div></div>
+          <div class="stat-card"><label>Mapped Multicast MAC</label><div id="v4Mac">-</div></div>
+        </div>
+      </div>
+
+      <!-- IPv6 Panel -->
+      <div id="panelV6" class="hidden">
+        <div class="controls-top">
+          <div class="input-wrap">
+            <input type="text" id="v6Input" class="ip-field" value="2001:db8:85a3::8a2e:370:7334" maxlength="39">
+            <select class="preset-select" id="v6Preset">
+              <option value="">Presets...</option>
+              <option value="2001:db8:85a3::8a2e:370:7334|64">Docs Example (2001:db8::/64)</option>
+              <option value="2606:4700:4700::1111|48">Global Public (2606:4700::/48)</option>
+              <option value="fe80::1a2b:3c4d:5e6f:7a8b|64">Link-Local Unicast (fe80::/64)</option>
+              <option value="fd12:3456:789a:1::1|64">Unique Local / ULA (fd00::/8)</option>
+              <option value="ff02::1|16">Multicast: All Nodes Link-Local (ff02::1)</option>
+              <option value="ff02::1:ff70:7334|104">Multicast: Solicited-Node (ff02::1:ff00:0/104)</option>
+            </select>
+          </div>
+          <div class="cidr-badge" id="v6Badge">/64</div>
+        </div>
+
+        <div class="slider-section">
+          <div class="slider-labels">
+            <span>Prefix Length: <span id="v6NetCount">64</span> bits</span>
+            <span>Interface ID: <span id="v6HostCount">64</span> bits</span>
+          </div>
+          <input type="range" id="v6Slider" min="1" max="128" value="64">
+        </div>
+
+        <div class="legend">
+          <span><i class="dot bit-net"></i> Global Prefix (1–48)</span>
+          <span><i class="dot bit-sub"></i> Local Subnet ID (49+)</span>
+          <span><i class="dot bit-host"></i> Interface ID (Host)</span>
+          <span><i class="dot bit-mcast"></i> Multicast (ff00::/8)</span>
+          <span><i class="dot bit-flag"></i> Flags & Scope (Bits 9–16)</span>
+        </div>
+
+        <div class="v6-grid" id="v6BitGrid"></div>
+
+        <div class="mcast-banner unicast-info" id="v6McastBox"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card"><label>Address Type & Scope</label><div id="v6Scope">-</div></div>
+          <div class="stat-card"><label>Compressed (RFC 5952)</label><div id="v6Compressed">-</div></div>
+          <div class="stat-card"><label>Full Expanded Address</label><div id="v6Expanded">-</div></div>
+          <div class="stat-card"><label>Network Prefix Address</label><div id="v6NetAddr">-</div></div>
+          <div class="stat-card"><label>Solicited-Node Multicast</label><div id="v6SolNode">-</div></div>
+          <div class="stat-card"><label>Mapped Multicast MAC</label><div id="v6Mac">-</div></div>
+          <div class="stat-card"><label>Available /64 Subnets</label><div id="v6Subnets">-</div></div>
+          <div class="stat-card"><label>Interface Addresses</label><div id="v6Hosts">-</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
