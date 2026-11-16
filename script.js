@@ -324,4 +324,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
   updateV4();
   updateV6();
+    document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && window.parent !== window) {
+      window.parent.postMessage('closeIpv4v6Modal', '*');
+    }
+  });
 });
