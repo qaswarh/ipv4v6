@@ -44,7 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
     [glossaryV4, glossaryV6].forEach(function (box) {
       var boxMatches = 0;
       box.querySelectorAll('.term-card').forEach(function (card) {
-        var match = card.textContent.toLowerCase().indexOf(query) !== -1;
+        var escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var regex = new RegExp('\\b' + escaped, 'i');
+        var match = regex.test(card.textContent);
+
         card.classList.toggle('hidden', !match);
         if (match) { boxMatches++; visibleCount++; }
       });
