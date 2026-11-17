@@ -24,34 +24,50 @@ document.addEventListener('DOMContentLoaded', function () {
   var glossaryNoResults = document.getElementById('glossaryNoResults');
 
   function filterGlossary() {
+    if (!glossarySearch) return;
     var query = glossarySearch.value.trim().toLowerCase();
-    var activeContainer = glossaryV4.classList.contains('hidden') ? glossaryV6 : glossaryV4;
-    var cards = activeContainer.querySelectorAll('.term-card');
-    var cats = activeContainer.querySelectorAll('.glossary-cat');
+
+    if (!query) {
+      var isV6 = tabV6.classList.contains('active');
+      glossaryV4.classList.toggle('hidden', isV6);
+      glossaryV6.classList.toggle('hidden', !isV6);
+      [glossaryV4, glossaryV6].forEach(function (box) {
+        box.querySelectorAll('.term-card, .glossary-cat').forEach(function (el) {
+          el.classList.remove('hidden');
+        });
+      });
+      if (glossaryNoResults) glossaryNoResults.classList.add('hidden');
+      return;
+    }
+
     var visibleCount = 0;
+    [glossaryV4, glossaryV6].forEach(function (box) {
+      var boxMatches = 0;
+      box.querySelectorAll('.term-card').forEach(function (card) {
+        var match = card.textContent.toLowerCase().indexOf(query) !== -1;
+        card.classList.toggle('hidden', !match);
+        if (match) { boxMatches++; visibleCount++; }
+      });
 
-    cards.forEach(function (card) {
-      var text = card.textContent.toLowerCase();
-      var match = !query || text.indexOf(query) !== -1;
-      card.classList.toggle('hidden', !match);
-      if (match) visibleCount++;
-    });
-
-    // Hide category headers if no cards under them match
-    cats.forEach(function (cat) {
-      var next = cat.nextElementSibling;
-      var hasVisibleCard = false;
-      while (next && !next.classList.contains('glossary-cat')) {
-        if (next.classList.contains('term-card') && !next.classList.contains('hidden')) {
-          hasVisibleCard = true;
-          break;
+      box.querySelectorAll('.glossary-cat').forEach(function (cat) {
+        var next = cat.nextElementSibling;
+        var hasVisibleCard = false;
+        while (next && !next.classList.contains('glossary-cat')) {
+          if (next.classList.contains('term-card') && !next.classList.contains('hidden')) {
+            hasVisibleCard = true;
+            break;
+          }
+          next = next.nextElementSibling;
         }
-        next = next.nextElementSibling;
-      }
-      cat.classList.toggle('hidden', !hasVisibleCard);
+        cat.classList.toggle('hidden', !hasVisibleCard);
+      });
+
+      box.classList.toggle('hidden', boxMatches === 0);
     });
 
-    glossaryNoResults.classList.toggle('hidden', visibleCount > 0);
+    if (glossaryNoResults) {
+      glossaryNoResults.classList.toggle('hidden', visibleCount > 0);
+    }
   }
 
   glossarySearch.addEventListener('input', filterGlossary);
