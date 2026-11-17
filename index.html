@@ -43,8 +43,38 @@
 
       <div class="glossary-cat">Private & Special IANA Blocks</div>
       <div class="term-card">
-        <h3>Private, CGNAT, Link-Local & Loopback</h3>
-        <p>Includes RFC 1918 private spaces (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>), Carrier-Grade NAT (<code>100.64.0.0/10</code>), APIPA link-local (<code>169.254.0.0/16</code>), loopback (<code>127.0.0.0/8</code>), documentation blocks, and RFC 2544 benchmarking ranges.</p>
+        <h3>Private IPv4 Ranges (RFC 1918)</h3>
+        <p>Addresses reserved for internal local area networks (LANs) that cannot route directly on the public internet without Network Address Translation (NAT): <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, and <code>192.168.0.0/16</code>.</p>
+      </div>
+      <div class="term-card">
+        <h3>CGNAT — Carrier-Grade NAT (100.64.0.0/10)</h3>
+        <p><strong>Carrier-Grade Network Address Translation</strong> (RFC 6598). Shared address space used by Internet Service Providers (ISPs) to place multiple subscribers behind a single public IPv4 address without conflicting with home LAN ranges.</p>
+      </div>
+      <div class="term-card">
+        <h3>APIPA — Automatic Private IP Addressing (169.254.0.0/16)</h3>
+        <p><strong>Automatic Private IP Addressing</strong> (Link-Local, RFC 3927). Self-assigned automatically by an operating system when a device is set to DHCP but cannot reach a DHCP server, allowing basic communication on the local link only.</p>
+      </div>
+      <div class="term-card">
+        <h3>Loopback Address Range (127.0.0.0/8)</h3>
+        <p>Reserved for internal host self-testing (most commonly <code>127.0.0.1</code> / <code>localhost</code>). Traffic sent to this range never leaves the device's network interface card.</p>
+      </div>
+      <div class="term-card">
+        <h3>Documentation Blocks — TEST-NET-1, 2 & 3 (RFC 5737)</h3>
+        <p>Reserved exclusively for technical manuals, training, and configuration examples so they never collide with live internet hosts: <code>192.0.2.0/24</code> (TEST-NET-1), <code>198.51.100.0/24</code> (TEST-NET-2), and <code>203.0.113.0/24</code> (TEST-NET-3).</p>
+      </div>
+      <div class="term-card">
+        <h3>Network Benchmarking Range (198.18.0.0/15)</h3>
+        <p>Reserved by RFC 2544 for isolated laboratory testing of network interconnect devices (routers, switches, and firewalls) without risking traffic leaks onto the public internet.</p>
+      </div>
+
+      <div class="glossary-cat">Multicast Protocols</div>
+      <div class="term-card">
+        <h3>OSPF — Open Shortest Path First (224.0.0.5 & 224.0.0.6)</h3>
+        <p><strong>Open Shortest Path First</strong> link-state routing protocol. Routers send Hello and link-state updates to <code>224.0.0.5</code> (All OSPF Routers) and <code>224.0.0.6</code> (Designated Routers) on the local segment.</p>
+      </div>
+      <div class="term-card">
+        <h3>SSDP — Simple Service Discovery Protocol (239.255.255.250)</h3>
+        <p><strong>Simple Service Discovery Protocol</strong>, used by <strong>UPnP (Universal Plug and Play)</strong> devices such as smart TVs, printers, and media servers to advertise and discover services on a home or office LAN.</p>
       </div>
 
       <div class="glossary-cat">Multicast Protocols</div>
