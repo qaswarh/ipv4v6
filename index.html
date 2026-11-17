@@ -186,6 +186,17 @@
             </p>
           </div>
           <div class="term-card">
+            <h3>Link-Local Unicast (fe80::/10) — IPv6's APIPA Equivalent</h3>
+            <p>
+              Unlike IPv4 <strong>APIPA</strong> (<code>169.254.0.0/16</code>),
+              which only activates when DHCP fails, every IPv6 interface is
+              <strong>required</strong> to auto-configure a
+              <code>fe80::/10</code> Link-Local address at all times using
+              SLAAC/EUI-64 or random privacy bits. Routers never forward
+              <code>fe80::/10</code> traffic off the local link.
+            </p>
+          </div>
+          <div class="term-card">
             <h3>Documentation & Discard-Only Blocks</h3>
             <p>
               <code>2001:db8::/32</code> (RFC 3849) is reserved exclusively for
