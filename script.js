@@ -51,20 +51,49 @@ document.addEventListener('DOMContentLoaded', function () {
   function classifyV4(ipInt) {
     var first = (ipInt >>> 24) & 255;
     var second = (ipInt >>> 16) & 255;
+    var third = (ipInt >>> 8) & 255;
 
+    if (ipInt === 0xFFFFFFFF) {
+      return { isMcast: false, badge: 'scope-special', label: 'BROADCAST — Limited Broadcast (255.255.255.255)' };
+    }
+    if (first === 0) {
+      return { isMcast: false, badge: 'scope-special', label: 'RESERVED — "This Network" (0.0.0.0/8)' };
+    }
     if (first >= 224 && first <= 239) {
       var sub = 'Global / Scoped Multicast';
-      if (first === 224 && second === 0 && ((ipInt >>> 8) & 255) === 0) sub = 'Local Network Control (224.0.0.0/24)';
+      if (first === 224 && second === 0 && third === 0) sub = 'Local Network Control (224.0.0.0/24)';
       else if (first === 239) sub = 'Private / Admin Scoped (239.0.0.0/8)';
       return { isMcast: true, badge: 'scope-mcast', label: 'MULTICAST — Class D: ' + sub };
     }
-    if (first >= 240) return { isMcast: false, badge: 'scope-special', label: 'RESERVED — Class E Experimental' };
-    if (first === 127) return { isMcast: false, badge: 'scope-special', label: 'LOCAL — Loopback (127.0.0.0/8)' };
-    if (first === 10) return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class A (10.0.0.0/8)' };
-    if (first === 172 && second >= 16 && second <= 31) return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class B (172.16.0.0/12)' };
-    if (first === 192 && second === 168) return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class C (192.168.0.0/16)' };
-    if (first === 100 && second >= 64 && second <= 127) return { isMcast: false, badge: 'scope-cgnat', label: 'CGNAT — Shared ISP Space (100.64.0.0/10)' };
-    if (first === 169 && second === 254) return { isMcast: false, badge: 'scope-special', label: 'LINK-LOCAL — APIPA (169.254.0.0/16)' };
+    if (first >= 240) {
+      return { isMcast: false, badge: 'scope-special', label: 'RESERVED — Class E Experimental (240.0.0.0/4)' };
+    }
+    if (first === 127) {
+      return { isMcast: false, badge: 'scope-special', label: 'LOCAL — Loopback (127.0.0.0/8)' };
+    }
+    if (first === 10) {
+      return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class A (10.0.0.0/8)' };
+    }
+    if (first === 172 && second >= 16 && second <= 31) {
+      return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class B (172.16.0.0/12)' };
+    }
+    if (first === 192 && second === 168) {
+      return { isMcast: false, badge: 'scope-private', label: 'PRIVATE — RFC 1918 Class C (192.168.0.0/16)' };
+    }
+    if (first === 100 && second >= 64 && second <= 127) {
+      return { isMcast: false, badge: 'scope-cgnat', label: 'CGNAT — Shared ISP Space (100.64.0.0/10)' };
+    }
+    if (first === 169 && second === 254) {
+      return { isMcast: false, badge: 'scope-special', label: 'LINK-LOCAL — APIPA (169.254.0.0/16)' };
+    }
+    if ((first === 192 && second === 0 && third === 2) ||
+        (first === 198 && second === 51 && third === 100) ||
+        (first === 203 && second === 0 && third === 113)) {
+      return { isMcast: false, badge: 'scope-special', label: 'DOCS / RESERVED — RFC 5737 TEST-NET' };
+    }
+    if (first === 198 && (second === 18 || second === 19)) {
+      return { isMcast: false, badge: 'scope-special', label: 'RESERVED — Benchmarking (198.18.0.0/15)' };
+    }
     var cls = first < 128 ? 'Class A' : first < 192 ? 'Class B' : 'Class C';
     return { isMcast: false, badge: 'scope-public', label: 'PUBLIC — Internet Routable (' + cls + ')' };
   }
@@ -233,22 +262,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var scopeLabel = 'PUBLIC — Global Unicast (2000::/3)';
     var scopeBadge = 'scope-public';
+    var h1 = hextets.at(1);
 
     if (isMcast) {
       scopeBadge = 'scope-mcast';
       scopeLabel = 'MULTICAST (ff00::/8) — Flags: 0x' + firstHextet.at(2) + ', Scope: ' + getV6MulticastScopeName(firstHextet.at(3));
-    } else if (firstHextet === '2001' && hextets.at(1) === '0db8') {
+    } else if (ipBigInt === 0n) {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'UNSPECIFIED — Default Route / None (::/128)';
+    } else if (ipBigInt === 1n) {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'LOCAL — Loopback (::1/128)';
+    } else if (hextets.slice(0, 5).join('') === '00000000000000000000' && hextets.at(5) === 'ffff') {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'TRANSITION — IPv4-Mapped IPv6 (::ffff:0:0/96)';
+    } else if (firstHextet === '0064' && h1 === 'ff9b') {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'TRANSITION — NAT64 Well-Known Prefix (64:ff9b::/96)';
+    } else if (firstHextet === '0100' && h1 === '0000' && hextets.at(2) === '0000' && hextets.at(3) === '0000') {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'RESERVED — Discard-Only Block (100::/64)';
+    } else if (firstHextet === '2001' && h1 === '0db8') {
       scopeBadge = 'scope-special';
       scopeLabel = 'DOCS / RESERVED — RFC 3849 Example (2001:db8::/32)';
+    } else if (firstHextet === '2001' && h1 === '0000') {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'TRANSITION — Teredo Tunneling (2001::/32)';
+    } else if (firstHextet === '2002') {
+      scopeBadge = 'scope-special';
+      scopeLabel = 'TRANSITION — 6to4 Tunneling (2002::/16)';
     } else if (firstHextet.startsWith('fe8') || firstHextet.startsWith('fe9') || firstHextet.startsWith('fea') || firstHextet.startsWith('feb')) {
       scopeBadge = 'scope-special';
       scopeLabel = 'LINK-LOCAL — Unicast (fe80::/10)';
     } else if (firstHextet.startsWith('fc') || firstHextet.startsWith('fd')) {
       scopeBadge = 'scope-private';
       scopeLabel = 'PRIVATE — Unique Local / ULA (fc00::/7)';
-    } else if (ipBigInt === 1n) {
-      scopeBadge = 'scope-special';
-      scopeLabel = 'LOCAL — Loopback (::1/128)';
     }
 
     document.getElementById('v6Scope').innerHTML = '<span class="scope-pill ' + scopeBadge + '">' + scopeLabel + '</span>';
