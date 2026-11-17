@@ -14,24 +14,25 @@
   <body>
     <div class="page-layout">
       <!-- Left Column: Dynamic Glossary -->
-      <aside class="glossary-panel">
-        <!-- IPv4 Glossary -->
-        <div id="glossaryV4">
-          <h2>IPv4 Glossary</h2>
-          <p class="glossary-intro">
-            Core terms for 32-bit IPv4 addressing, subnetting, and multicast.
-          </p>
+  <aside class="glossary-panel">
+    <div class="glossary-search-wrap">
+      <input type="text" id="glossarySearch" class="glossary-search" placeholder="Filter terms (e.g., APIPA, Class B, NAT64, SSDP)...">
+    </div>
+    <div id="glossaryNoResults" class="no-results hidden">No matching terms found.</div>
 
-          <div class="term-card">
-            <h3>Private, CGNAT & Public IPv4</h3>
-            <p>
-              <strong>Private (RFC 1918):</strong> <code>10.0.0.0/8</code>,
-              <code>172.16.0.0/12</code>, and <code>192.168.0.0/16</code> are
-              for internal LANs. <strong>CGNAT (RFC 6598):</strong>
-              <code>100.64.0.0/10</code> is shared ISP space.
-              <strong>Public:</strong> Globally unique and internet-routable.
-            </p>
-          </div>
+    <!-- IPv4 Knowledge Base -->
+    <div id="glossaryV4">
+      <h2>IPv4 Knowledge Base</h2>
+      <p class="glossary-intro">Complete reference for 32-bit IPv4 addressing, classes, special ranges, and multicast.</p>
+      <!-- Contains individual term cards for Addressing & Subnetting, Legacy Classful Ranges, Private & Special IANA Blocks, and Multicast Protocols -->
+    </div>
+    <!-- IPv6 Knowledge Base -->
+    <div id="glossaryV6" class="hidden">
+      <h2>IPv6 Knowledge Base</h2>
+      <p class="glossary-intro">Complete reference for 128-bit IPv6 structure, scopes, neighbor discovery, and transition tools.</p>
+      <!-- Contains individual term cards for 128-Bit Structure, Unicast Scopes & Special Blocks, Multicast & Neighbor Discovery, and IPv4-to-IPv6 Transition -->
+    </div>
+  </aside>
 
           <div class="term-card">
             <h3>Network Part (Prefix)</h3>

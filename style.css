@@ -115,3 +115,47 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: #2563eb; }
 .scope-mcast { background-color: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
 
 .hidden { display: none !important; }
+/* Glossary Sticky Search & Categories */
+.glossary-search-wrap {
+  position: sticky;
+  top: 0;
+  background: #ffffff;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  z-index: 10;
+}
+
+.glossary-search {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 14px;
+  border: 1px solid #9ca3af;
+  border-radius: 8px;
+  outline: none;
+  background: #f9fafb;
+}
+
+.glossary-search:focus {
+  border-color: #2563eb;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.glossary-cat {
+  margin: 20px 0 10px;
+  padding-bottom: 4px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #2563eb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.no-results {
+  text-align: center;
+  padding: 20px 10px;
+  font-size: 13.5px;
+  color: #6b7280;
+}

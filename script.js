@@ -13,10 +13,49 @@ document.addEventListener('DOMContentLoaded', function () {
     panelV6.classList.toggle('hidden', mode !== 'v6');
     glossaryV4.classList.toggle('hidden', mode !== 'v4');
     glossaryV6.classList.toggle('hidden', mode !== 'v6');
+    filterGlossary();
   }
 
   tabV4.addEventListener('click', function () { switchMode('v4'); });
   tabV6.addEventListener('click', function () { switchMode('v6'); });
+
+  // --- Live Glossary Search ---
+  var glossarySearch = document.getElementById('glossarySearch');
+  var glossaryNoResults = document.getElementById('glossaryNoResults');
+
+  function filterGlossary() {
+    var query = glossarySearch.value.trim().toLowerCase();
+    var activeContainer = glossaryV4.classList.contains('hidden') ? glossaryV6 : glossaryV4;
+    var cards = activeContainer.querySelectorAll('.term-card');
+    var cats = activeContainer.querySelectorAll('.glossary-cat');
+    var visibleCount = 0;
+
+    cards.forEach(function (card) {
+      var text = card.textContent.toLowerCase();
+      var match = !query || text.indexOf(query) !== -1;
+      card.classList.toggle('hidden', !match);
+      if (match) visibleCount++;
+    });
+
+    // Hide category headers if no cards under them match
+    cats.forEach(function (cat) {
+      var next = cat.nextElementSibling;
+      var hasVisibleCard = false;
+      while (next && !next.classList.contains('glossary-cat')) {
+        if (next.classList.contains('term-card') && !next.classList.contains('hidden')) {
+          hasVisibleCard = true;
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      cat.classList.toggle('hidden', !hasVisibleCard);
+    });
+
+    glossaryNoResults.classList.toggle('hidden', visibleCount > 0);
+  }
+
+  glossarySearch.addEventListener('input', filterGlossary);
+
 
   var v4Input = document.getElementById('v4Input');
   var v4Slider = document.getElementById('v4Slider');
@@ -87,8 +126,8 @@ document.addEventListener('DOMContentLoaded', function () {
       return { isMcast: false, badge: 'scope-special', label: 'LINK-LOCAL — APIPA (169.254.0.0/16)' };
     }
     if ((first === 192 && second === 0 && third === 2) ||
-        (first === 198 && second === 51 && third === 100) ||
-        (first === 203 && second === 0 && third === 113)) {
+      (first === 198 && second === 51 && third === 100) ||
+      (first === 203 && second === 0 && third === 113)) {
       return { isMcast: false, badge: 'scope-special', label: 'DOCS / RESERVED — RFC 5737 TEST-NET' };
     }
     if (first === 198 && (second === 18 || second === 19)) {
@@ -372,7 +411,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   updateV4();
   updateV6();
-    document.addEventListener('keydown', function (e) {
+  document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && window.parent !== window) {
       window.parent.postMessage('closeIpv4v6Modal', '*');
     }
