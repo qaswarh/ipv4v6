@@ -25,12 +25,80 @@
       <h2>IPv4 Knowledge Base</h2>
       <p class="glossary-intro">Complete reference for 32-bit IPv4 addressing, classes, special ranges, and multicast.</p>
       <!-- Contains individual term cards for Addressing & Subnetting, Legacy Classful Ranges, Private & Special IANA Blocks, and Multicast Protocols -->
+             <div class="glossary-cat">Addressing & Subnetting</div>
+      <div class="term-card">
+        <h3>Network Part, Host Part & CIDR</h3>
+        <p>Leading bits identify the network prefix; trailing bits identify individual host interfaces. CIDR notation (e.g., <code>/24</code>) denotes prefix length.</p>
+      </div>
+      <div class="term-card">
+        <h3>Subnet/Wildcard Masks & Broadcasts</h3>
+        <p>Subnet masks use <code>1</code>s for network bits; wildcard masks invert them. The first IP in a subnet is the network address, and the last is the broadcast address.</p>
+      </div>
+
+      <div class="glossary-cat">Legacy Classful Ranges</div>
+      <div class="term-card">
+        <h3>Classes A, B, C, D & E</h3>
+        <p>Legacy classes range from Class A (<code>1.0.0.0/8</code>, up to 16.7M hosts) down to Class C (<code>192.0.0.0/24</code>, up to 254 hosts). Class D (<code>224.0.0.0/4</code>) is for multicast and Class E (<code>240.0.0.0/4</code>) is experimental.</p>
+      </div>
+
+      <div class="glossary-cat">Private & Special IANA Blocks</div>
+      <div class="term-card">
+        <h3>Private, CGNAT, Link-Local & Loopback</h3>
+        <p>Includes RFC 1918 private spaces (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>), Carrier-Grade NAT (<code>100.64.0.0/10</code>), APIPA link-local (<code>169.254.0.0/16</code>), loopback (<code>127.0.0.0/8</code>), documentation blocks, and RFC 2544 benchmarking ranges.</p>
+      </div>
+
+      <div class="glossary-cat">Multicast Protocols</div>
+      <div class="term-card">
+        <h3>OSPF & SSDP/UPnP Multicast</h3>
+        <p>Common multicast endpoints include OSPF routers (<code>224.0.0.5</code> / <code>224.0.0.6</code>) and SSDP/UPnP discovery traffic (<code>239.255.255.250</code>).</p>
+      </div>
+
     </div>
     <!-- IPv6 Knowledge Base -->
     <div id="glossaryV6" class="hidden">
       <h2>IPv6 Knowledge Base</h2>
       <p class="glossary-intro">Complete reference for 128-bit IPv6 structure, scopes, neighbor discovery, and transition tools.</p>
       <!-- Contains individual term cards for 128-Bit Structure, Unicast Scopes & Special Blocks, Multicast & Neighbor Discovery, and IPv4-to-IPv6 Transition -->
+             <div class="glossary-cat">128-Bit Structure</div>
+      <div class="term-card">
+        <h3>Hextet & Zero Compression (::)</h3>
+        <p>A 16-bit block of four hex digits (e.g., <code>2001</code>). RFC 5952 lets you replace the longest consecutive run of all-zero hextets with a double colon (<code>::</code>) once per address.</p>
+      </div>
+      <div class="term-card">
+        <h3>Global Routing Prefix, Subnet ID & Interface ID</h3>
+        <p>The first 48 bits form the ISP/site Global Prefix, bits 49–64 form the Subnet ID (65,536 <code>/64</code> LANs), and the trailing 64 bits identify the individual host interface.</p>
+      </div>
+
+      <div class="glossary-cat">Unicast Scopes & Special Blocks</div>
+      <div class="term-card">
+        <h3>Global Unicast, ULA & Link-Local</h3>
+        <p><strong>Global Unicast (<code>2000::/3</code>):</strong> Public internet-routable addresses. <strong>Unique Local / ULA (<code>fc00::/7</code>):</strong> Private local-only space. <strong>Link-Local (<code>fe80::/10</code>):</strong> Auto-configured on every interface for single-link communication.</p>
+      </div>
+      <div class="term-card">
+        <h3>Documentation & Discard-Only Blocks</h3>
+        <p><code>2001:db8::/32</code> (RFC 3849) is reserved exclusively for documentation and examples. <code>100::/64</code> (RFC 6666) is used for blackhole/discard routing.</p>
+      </div>
+
+      <div class="glossary-cat">Multicast & Neighbor Discovery</div>
+      <div class="term-card">
+        <h3>Multicast Flags & Scope (ff00::/8)</h3>
+        <p>Addresses starting with <code>ff</code>. The 3rd hex digit sets flags (e.g., transient) and the 4th defines reachability scope (<code>2</code> = Link-Local, <code>5</code> = Site-Local, <code>e</code> = Global).</p>
+      </div>
+      <div class="term-card">
+        <h3>All Nodes & Solicited-Node Multicast</h3>
+        <p>IPv6 replaces ARP broadcasts with multicast. <code>ff02::1</code> reaches all local nodes, while every unicast IP joins <code>ff02::1:ffXX:XXXX</code> (taking its last 24 bits) for Neighbor Discovery.</p>
+      </div>
+
+      <div class="glossary-cat">IPv4-to-IPv6 Transition Mechanisms</div>
+      <div class="term-card">
+        <h3>NAT64 & IPv4-Mapped Addresses</h3>
+        <p><strong>NAT64 (<code>64:ff9b::/96</code>):</strong> Translates IPv6-only packets to IPv4 destinations by embedding the 32-bit IPv4 address in the last 32 bits. <strong>IPv4-Mapped (<code>::ffff:0:0/96</code>):</strong> Represents IPv4 addresses inside dual-stack IPv6 sockets.</p>
+      </div>
+      <div class="term-card">
+        <h3>6to4 & Teredo Tunneling</h3>
+        <p><strong>6to4 (<code>2002::/16</code>):</strong> Encapsulates IPv6 packets inside IPv4 headers using a public IPv4 address embedded in bits 17–48. <strong>Teredo (<code>2001::/32</code>):</strong> Tunnels IPv6 over UDP/IPv4 to traverse NAT routers.</p>
+      </div>
+
     </div>
   </aside>
 
